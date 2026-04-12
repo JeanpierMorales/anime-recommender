@@ -1,6 +1,6 @@
 ## 🎌 Anime Recommender System
 
-Jeanpierón web desarrollada con Django que permite recomendar animes personalizados a los usuarios en función de sus gustos, preferencias y comportamiento dentro de la plataforma.
+Animatch web desarrollada con Django que permite recomendar animes personalizados a los usuarios en función de sus gustos, preferencias y comportamiento dentro de la plataforma.
 
 ---
 
