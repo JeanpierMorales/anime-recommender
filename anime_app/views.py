@@ -4,7 +4,7 @@ from django.views.decorators.http import require_http_methods
 import json
 
 # Importar nuestro servicio de integración con Jikan API
-from .services import search_anime, get_anime_detail
+from .services import search_anime, get_anime_detail, search_anime_by_genre
 
 
 def index(request):
@@ -122,3 +122,74 @@ def anime_detail(request, mal_id):
     # Devolver los detalles como JSON
     detail["status"] = "success"
     return JsonResponse(detail)
+
+
+@require_http_methods(["GET"])
+def anime_search_by_genre(request):
+    """
+    Vista para buscar animes por género usando la Jikan API.
+    
+    GET: /api/anime/genre/<genre_id>/
+    
+    Params:
+        - genre_id (int): ID del género en MyAnimeList (requerido)
+        - limit (int): Número máximo de resultados (opcional, default: 25)
+    
+    Returns:
+        JSON con lista de animes del género especificado
+        
+    Ejemplo de respuesta:
+        {
+            "status": "success",
+            "genre_id": 1,
+            "count": 3,
+            "results": [
+                {
+                    "mal_id": 1,
+                    "title": "Death Note",
+                    "image_url": "...",
+                    "genres": "Thriller, ..."
+                }
+            ]
+        }
+    """
+    
+    # Obtener parámetros de la URL
+    genre_id_str = request.GET.get("genre_id", "").strip()
+    limit_str = request.GET.get("limit", "25").strip()
+    
+    # Validar genre_id
+    try:
+        genre_id = int(genre_id_str)
+        if genre_id <= 0:
+            raise ValueError("ID de género debe ser positivo")
+    except (ValueError, TypeError):
+        return JsonResponse({
+            "status": "error",
+            "message": "ID de género inválido. Debe ser un número entero positivo."
+        }, status=400)
+    
+    # Validar limit
+    try:
+        limit = int(limit_str)
+        if limit <= 0 or limit > 100:
+            limit = 25  # valor por defecto si está fuera de rango
+    except (ValueError, TypeError):
+        limit = 25
+    
+    try:
+        # Buscar animes por género
+        results = search_anime_by_genre(genre_id, limit)
+        
+        return JsonResponse({
+            "status": "success",
+            "genre_id": genre_id,
+            "count": len(results),
+            "results": results
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": f"Error interno del servidor: {str(e)}"
+        }, status=500)

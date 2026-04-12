@@ -8,7 +8,7 @@
     --accent: #3b82f6;
     --accent-dark: #1d4ed8;
     --shadow: 0 24px 80px rgba(39, 56, 88, 0.08);
-    --radius: 24px;
+    --radius: 20px;
 }
 
 body {
@@ -62,7 +62,7 @@ input {
     padding: 20px 24px;
     background: rgba(255, 255, 255, 0.76);
     border: 1px solid var(--border);
-    border-radius: 32px;
+    border-radius: 20px;
     backdrop-filter: blur(16px);
     box-shadow: var(--shadow);
     margin-bottom: 28px;
@@ -236,7 +236,7 @@ body.theme-dark .site-nav {
 }
 
 .section-block {
-    padding: 0;
+    padding: 30px;
     border: none;
     box-shadow: none;
     margin-bottom: 28px;
@@ -310,7 +310,7 @@ body.theme-dark .site-nav {
 .search-section,
 .detail-section,
 .roadmap-section {
-    padding: 28px 0 0;
+    padding: 30px;
 }
 
 .search-panel,
@@ -571,4 +571,44 @@ input[type="search"]::placeholder {
     .footer-links {
         justify-content: center;
     }
+}
+
+/* Genre Card Styles */
+.genre-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+.genre-card:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.genre-card:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+/* Loading state for results */
+.hint {
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    padding: 32px;
+}
+
+.hint.error {
+    color: #ef4444;
 }

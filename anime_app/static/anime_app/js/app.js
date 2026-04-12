@@ -55,10 +55,18 @@ const translations = {
         explore_title: 'Carrusel de categorías',
         genre_action: 'Acción',
         genre_adventure: 'Aventura',
-        genre_fantasy: 'Fantasía',
-        genre_sf: 'Ciencia ficción',
-        genre_drama: 'Drama',
         genre_comedy: 'Comedia',
+        genre_fantasy: 'Fantasía',
+        genre_romance: 'Romance',
+        genre_scifi: 'Ciencia Ficción',
+        genre_slice_of_life: 'Vida Cotidiana',
+        genre_supernatural: 'Sobrenatural',
+        genre_mystery: 'Misterio',
+        genre_horror: 'Terror',
+        genre_mecha: 'Mecha',
+        genre_sports: 'Deportes',
+        genre_music: 'Música',
+        genre_isekai: 'Isekai',
         search_tag: 'Búsqueda dinámica',
         search_title: 'Encuentra anime en segundos',
         search_label: 'Buscar anime',
@@ -101,10 +109,18 @@ const translations = {
         explore_title: 'Categories carousel',
         genre_action: 'Action',
         genre_adventure: 'Adventure',
-        genre_fantasy: 'Fantasy',
-        genre_sf: 'Sci-fi',
-        genre_drama: 'Drama',
         genre_comedy: 'Comedy',
+        genre_fantasy: 'Fantasy',
+        genre_romance: 'Romance',
+        genre_scifi: 'Sci-Fi',
+        genre_slice_of_life: 'Slice of Life',
+        genre_supernatural: 'Supernatural',
+        genre_mystery: 'Mystery',
+        genre_horror: 'Horror',
+        genre_mecha: 'Mecha',
+        genre_sports: 'Sports',
+        genre_music: 'Music',
+        genre_isekai: 'Isekai',
         search_tag: 'Dynamic search',
         search_title: 'Find anime in seconds',
         search_label: 'Search anime',
@@ -202,6 +218,14 @@ carouselButtons.forEach((button) => {
         const target = button.dataset.target;
         const direction = button.dataset.direction;
         scrollCarousel(target, direction);
+    });
+});
+
+// Event listeners for genre cards
+document.querySelectorAll('.genre-card').forEach((card) => {
+    card.addEventListener('click', () => {
+        const genreId = card.dataset.genreId;
+        fetchAnimeByGenre(genreId);
     });
 });
 
@@ -342,6 +366,36 @@ function changePage(page) {
 
     // Scroll to results section
     searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function fetchAnimeByGenre(genreId) {
+    // Reset pagination
+    currentPage = 1;
+
+    // Show loading state
+    resultsList.innerHTML = `<p class="hint">${currentLanguage === 'en' ? 'Searching...' : 'Buscando...'}</p>`;
+    paginationControls.innerHTML = '';
+    resultCount.textContent = '0';
+
+    try {
+        const response = await fetch(`/anime/genre/?genre_id=${genreId}&limit=50`);
+        if (!response.ok) {
+            throw new Error('Error al buscar por género');
+        }
+
+        const data = await response.json();
+        allResults = data.results || [];
+        resultCount.textContent = allResults.length;
+
+        // Scroll to results section
+        searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        renderResultsPage();
+
+    } catch (error) {
+        resultsList.innerHTML = `<p class="hint error">${currentLanguage === 'en' ? 'Error searching by genre. Please try again.' : 'Error al buscar por género. Inténtalo de nuevo.'}</p>`;
+        console.error(error);
+    }
 }
 
 applyTheme(currentTheme);

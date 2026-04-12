@@ -212,3 +212,112 @@ def _get_anime_from_db(query):
     )[:25]
     
     return list(animes)
+
+
+def search_anime_by_genre(genre_id, limit=25):
+    """
+    Busca animes por género específico usando Jikan API.
+    
+    Args:
+        genre_id (int): ID del género en MyAnimeList
+        limit (int): Número máximo de resultados (default: 25)
+    
+    Returns:
+        list: Lista de animes del género especificado
+        
+    Ejemplo:
+        >>> search_anime_by_genre(1)  # Acción
+        [
+            {
+                'mal_id': 1,
+                'title': 'Death Note',
+                'image_url': '...',
+                'genres': 'Thriller, ...'
+            },
+            ...
+        ]
+    """
+    
+    # Validar que genre_id sea válido
+    if not genre_id or not isinstance(genre_id, int):
+        return []
+    
+    # Crear clave de caché única para esta búsqueda
+    cache_key = f"search_genre_{genre_id}_{limit}"
+    
+    # Verificar si ya tenemos este resultado en caché
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        print(f"[CACHÉ] Retornando resultado en caché para género {genre_id}")
+        return cached_result
+    
+    try:
+        # Hacer petición GET a Jikan API con parámetro de género
+        print(f"[API] Buscando por género {genre_id} en Jikan")
+        response = requests.get(
+            f"{JIKAN_API_BASE}/anime",
+            params={"genres": genre_id, "limit": limit, "order_by": "score", "sort": "desc"},
+            timeout=10
+        )
+        response.raise_for_status()  # Lanzar excepción si hay error HTTP
+        
+        data = response.json()
+        results = []
+        
+        # Procesar cada anime encontrado
+        for anime_data in data.get("data", []):
+            anime_info = {
+                "mal_id": anime_data.get("mal_id"),
+                "title": anime_data.get("title"),
+                "image_url": anime_data.get("images", {}).get("jpg", {}).get("image_url"),
+                "genres": ", ".join([g["name"] for g in anime_data.get("genres", [])])
+            }
+            results.append(anime_info)
+            
+            # Guardar/actualizar anime en nuestra BD para caché local
+            _save_anime_to_db(anime_info)
+        
+        # Guardar resultados en caché durante 1 hora
+        cache.set(cache_key, results, CACHE_TIME)
+        print(f"[GUARDADO] {len(results)} animes por género {genre_id} en caché")
+        
+        return results
+        
+    except requests.exceptions.RequestException as e:
+        # Si hay error en la API, intentar devolver resultados locales
+        print(f"[ERROR] Fallo en petición a Jikan por género: {str(e)}")
+        return _get_anime_by_genre_from_db(genre_id, limit)
+
+
+def _get_anime_by_genre_from_db(genre_id, limit=25):
+    """
+    Busca animes por género en la base de datos local como fallback.
+    Se usa cuando Jikan API no está disponible.
+    
+    Args:
+        genre_id (int): ID del género
+        limit (int): Número máximo de resultados
+    
+    Returns:
+        list: Animes encontrados en BD local por género
+    """
+    print(f"[BD] Buscando fallback en BD local por género {genre_id}")
+    
+    # Mapear IDs de género a nombres comunes para búsqueda en BD
+    genre_names = {
+        1: "Action", 2: "Adventure", 4: "Comedy", 8: "Drama", 10: "Fantasy",
+        22: "Romance", 24: "Sci-Fi", 36: "Slice of Life", 37: "Supernatural",
+        7: "Mystery", 14: "Horror", 18: "Mecha", 30: "Sports", 19: "Music"
+    }
+    
+    genre_name = genre_names.get(genre_id, "")
+    if not genre_name:
+        return []
+    
+    animes = Anime.objects.filter(
+        genres__icontains=genre_name
+    ).values(
+        "mal_id", "title", "image_url", "genres"
+    )[:limit]
+    
+    return list(animes)

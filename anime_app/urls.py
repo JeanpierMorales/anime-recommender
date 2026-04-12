@@ -19,6 +19,10 @@ urlpatterns = [
     # POST: /anime/search/ con JSON: {"query": "Death Note"}
     path("anime/search/", views.anime_search, name="anime_search"),
     
+    # Endpoint para búsqueda de animes por género
+    # GET: /anime/genre/?genre_id=1&limit=25
+    path("anime/genre/", views.anime_search_by_genre, name="anime_search_by_genre"),
+    
     # Endpoint para obtener detalles de un anime específico
     # GET: /anime/1/
     # Devuelve: sinopsis, episodios, score, géneros, URLs, etc.
