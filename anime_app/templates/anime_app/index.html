@@ -21,7 +21,6 @@
                 <a href="#hero" data-i18n="nav_home">Inicio</a>
                 <a href="#explore" data-i18n="nav_explore">Explorar</a>
                 <a href="#searchSection" data-i18n="nav_search">Buscar</a>
-                <a href="#roadmap" data-i18n="nav_roadmap">Roadmap</a>
             </div>
             <div class="nav-actions">
                 <button class="nav-button" id="langToggle">ES</button>
@@ -31,12 +30,10 @@
 
         <header class="hero" id="hero">
             <div class="hero-copy">
-                <span class="eyebrow" data-i18n="hero_tag">Landing moderna</span>
                 <h1 data-i18n="hero_title">Busca anime rápido y explora detalles al instante</h1>
                 <p data-i18n="hero_subtitle">Interfaz limpia con búsqueda dinámica, resultados en vivo y vista de detalle. Ideal para la base del frontend de tu aplicación.</p>
                 <div class="hero-actions">
                     <button class="primary-button" id="heroSearchButton" data-target="#searchSection" data-i18n="hero_cta">Comenzar búsqueda</button>
-                    <a class="secondary-link" href="#roadmap" data-i18n="hero_roadmap">Ver roadmap</a>
                 </div>
             </div>
             <div class="hero-panel">
@@ -47,10 +44,6 @@
                 <div class="hero-card accent-card">
                     <h3 data-i18n="hero_metrics_2_title">Vista de detalle</h3>
                     <p data-i18n="hero_metrics_2_body">Selecciona un anime y ve sinopsis, score y episodios.</p>
-                </div>
-                <div class="hero-card">
-                    <h3 data-i18n="hero_metrics_3_title">Preparado para crecer</h3>
-                    <p data-i18n="hero_metrics_3_body">La base de frontend lista para agregar login y favoritos.</p>
                 </div>
             </div>
         </header>
@@ -114,7 +107,7 @@
             </div>
             <div class="detail-panel">
                 <div class="detail-card hidden" id="detailCard">
-                    <button class="close-detail" id="closeDetail">×</button>
+                    <button class="close-detail" id="closeDetail">❌</button>
                     <div class="detail-content">
                         <div class="detail-image-section">
                             <img id="detailImage" src="" alt="Anime image">
@@ -124,9 +117,9 @@
                             <p id="detailGenres" class="detail-genres"></p>
                             <span id="detailStatus" class="pill"></span>
                             <div class="detail-metrics">
-                                <div><strong data-i18n="detail_episodes">Episodios</strong><span id="detailEpisodes">-</span></div>
-                                <div><strong data-i18n="detail_score">Score</strong><span id="detailScore">-</span></div>
-                                <div><strong data-i18n="detail_rank">Ranking</strong><span id="detailRank">-</span></div>
+                                <div><strong data-i18n="detail_episodes">Episodios: </strong><span id="detailEpisodes">-</span></div>
+                                <div><strong data-i18n="detail_score">Score: </strong><span id="detailScore">-</span></div>
+                                <div><strong data-i18n="detail_rank">Ranking: </strong><span id="detailRank">-</span></div>
                             </div>
                             <div class="detail-synopsis">
                                 <h3 data-i18n="detail_synopsis_title">Sinopsis</h3>

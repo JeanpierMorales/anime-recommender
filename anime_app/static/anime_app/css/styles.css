@@ -48,7 +48,7 @@ input {
 }
 
 .page-container {
-    width: min(1180px, calc(100% - 32px));
+    width: min(1200px, calc(100% - 32px));
     margin: 0 auto;
     padding: 24px 0 48px;
 }
@@ -141,7 +141,8 @@ body.theme-dark .site-nav {
     grid-template-columns: 1.1fr 0.9fr;
     gap: 28px;
     align-items: start;
-    margin-bottom: 34px;
+    margin-bottom: 150px;
+    margin-top: 150px  ;
 }
 
 .hero-copy {
