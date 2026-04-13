@@ -1,39 +1,37 @@
-/*
-Script principal para la interfaz de búsqueda y landing page.
-Permite cambiar idioma, alternar tema y consultar la API local.
-*/
+// Anime Recommender - Frontend JavaScript 
+const searchInput = document.getElementById('searchInput'); // Input de búsqueda
+const searchButton = document.getElementById('searchButton'); // Botón de búsqueda
+const heroSearchButton = document.getElementById('heroSearchButton'); // Botón de búsqueda en la sección hero
+const themeToggle = document.getElementById('themeToggle'); // Botón para cambiar tema
+const langToggle = document.getElementById('langToggle'); // Botón para cambiar idioma
+const resultsList = document.getElementById('resultsList'); //  Contenedor de resultados de búsqueda
+const resultCount = document.getElementById('resultCount'); // Contador de resultados encontrados
+const detailCard = document.getElementById('detailCard'); //    Contenedor de detalles del anime seleccionado
+const detailPlaceholder = document.getElementById('detailPlaceholder'); // Contenedor de mensaje cuando no hay detalles seleccionados
+const closeDetail = document.getElementById('closeDetail'); // Botón para cerrar la vista de detalle
+const searchSection = document.getElementById('searchSection'); // Sección de búsqueda para scroll suave
+const carouselButtons = document.querySelectorAll('.pager'); // Botones de paginación para carrusel de géneros
+const textNodes = document.querySelectorAll('[data-i18n]'); // Nodos de texto para traducción
 
-const searchInput = document.getElementById('searchInput');
-const searchButton = document.getElementById('searchButton');
-const heroSearchButton = document.getElementById('heroSearchButton');
-const themeToggle = document.getElementById('themeToggle');
-const langToggle = document.getElementById('langToggle');
-const resultsList = document.getElementById('resultsList');
-const resultCount = document.getElementById('resultCount');
-const detailCard = document.getElementById('detailCard');
-const detailPlaceholder = document.getElementById('detailPlaceholder');
-const closeDetail = document.getElementById('closeDetail');
-const searchSection = document.getElementById('searchSection');
-const carouselButtons = document.querySelectorAll('.pager');
-const textNodes = document.querySelectorAll('[data-i18n]');
-
-const detailImage = document.getElementById('detailImage');
-const detailTitle = document.getElementById('detailTitle');
-const detailGenres = document.getElementById('detailGenres');
-const detailStatus = document.getElementById('detailStatus');
-const detailSynopsis = document.getElementById('detailSynopsis');
-const detailEpisodes = document.getElementById('detailEpisodes');
-const detailScore = document.getElementById('detailScore');
-const detailRank = document.getElementById('detailRank');
-const detailUrl = document.getElementById('detailUrl');
+// Detalles del anime
+const detailImage = document.getElementById('detailImage'); // Imagen del anime en la vista de detalle
+const detailTitle = document.getElementById('detailTitle'); // Título del anime en la vista de detalle
+const detailGenres = document.getElementById('detailGenres'); // Géneros del anime en la vista de detalle
+const detailStatus = document.getElementById('detailStatus'); // Estado del anime (emitido, en emisión, etc.) en la vista de detalle
+const detailSynopsis = document.getElementById('detailSynopsis'); // Sinopsis del anime en la vista de detalle
+const detailEpisodes = document.getElementById('detailEpisodes'); // Número de episodios del anime en la vista de detalle
+const detailScore = document.getElementById('detailScore'); // Puntuación del anime en la vista de detalle
+const detailRank = document.getElementById('detailRank'); // Rango del anime en la vista de detalle
+const detailUrl = document.getElementById('detailUrl'); // URL del anime en la vista de detalle
 
 // Pagination variables
 let currentPage = 1;
-const resultsPerPage = 4;
-let allResults = [];
-const paginationControls = document.getElementById('paginationControls');
+const resultsPerPage = 4; // Número de resultados a mostrar por página
+let allResults = []; 
+const paginationControls = document.getElementById('paginationControls'); // Contenedor para los controles de paginación
 
 const translations = {
+    // Traducciones para español e inglés
     es: {
         nav_slogan: 'Busca anime con estilo',
         nav_home: 'Inicio',
@@ -89,6 +87,7 @@ const translations = {
         roadmap_week6: 'UI pulida, errores y despliegue.',
     },
     en: {
+        //  Traducciones para inglés
         nav_slogan: 'Search anime with style',
         nav_home: 'Home',
         nav_explore: 'Explore',
@@ -144,21 +143,24 @@ const translations = {
     }
 };
 
+// Cargar preferencias de idioma y tema desde localStorage
 let currentLanguage = localStorage.getItem('animeLanguage') || 'es';
 let currentTheme = localStorage.getItem('animeTheme') || 'light';
 
+// Funciones para aplicar tema y idioma
 function applyTheme(theme) {
-    const body = document.body;
-    body.classList.toggle('theme-dark', theme === 'dark');
-    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-    currentTheme = theme;
-    localStorage.setItem('animeTheme', theme);
+    const body = document.body; // Aplicar clase de tema al body
+    body.classList.toggle('theme-dark', theme === 'dark'); // Agregar o quitar clase según el tema
+    themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙'; // Cambiar ícono del botón de tema
+    currentTheme = theme; //    Actualizar variable de tema actual
+    localStorage.setItem('animeTheme', theme); // Guardar preferencia de tema en localStorage
 }
 
+// Función para aplicar idioma a los elementos con data-i18n
 function applyLanguage(lang) {
     const strings = translations[lang] || translations.es;
     textNodes.forEach((node) => {
-        const key = node.dataset.i18n;
+        const key = node.dataset.i18n; // Obtener clave de traducción del atributo data-i18n
         if (strings[key]) {
             node.textContent = strings[key];
         }
@@ -232,7 +234,7 @@ document.querySelectorAll('.genre-card').forEach((card) => {
 async function fetchAnimeResults(query) {
     resultsList.innerHTML = '<p class="hint">Buscando...</p>';
     resultCount.textContent = '0';
-    currentPage = 1; // Reset to first page on new search
+    currentPage = 1; 
 
     try {
         const response = await fetch(`/anime/search/?query=${encodeURIComponent(query)}`);
