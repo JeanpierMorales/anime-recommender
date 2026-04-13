@@ -126,6 +126,19 @@ body.theme-dark .site-nav {
     font-weight: 700;
 }
 
+.brand-mark img,
+.brand-mark {
+    width: 46px;
+    height: 46px;
+}
+
+img.brand-mark {
+    display: block;
+    object-fit: contain;
+    border-radius: 16px;
+    background: transparent;
+}
+
 .brand-label {
     margin: 0;
     font-weight: 700;
@@ -212,6 +225,31 @@ body.theme-dark .site-nav {
     flex-wrap: wrap;
     gap: 14px;
     margin-top: 30px;
+}
+
+.hero-search {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.hero-search input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 16px;
+}
+
+.hero-search input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .primary-button {
@@ -748,7 +786,7 @@ input[type="search"]::placeholder {
 /* ===== ESTILOS PARA SECCIÓN DE FEATURES ===== */
 
 .features {
-    padding: 4rem 0;
+    padding: 4rem 2rem;
     background: var(--surface);
 }
 

@@ -4,16 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - Anime Recommender</title>
+    <title>Mi Perfil - Animatcher</title>
     <link rel="stylesheet" href="{% static 'anime_app/css/styles.css' %}">
 </head>
 <body class="theme-light">
     <div class="page-container">
         <nav class="site-nav">
             <div class="brand">
-                <span class="brand-mark">AR</span>
+                <img class="brand-mark" src="{% static 'anime_app/images/logo.png' %}" alt="Animatcher logo">
                 <div>
-                    <p class="brand-label">Anime Recommender</p>
+                    <p class="brand-label">Animatcher</p>
                     <span class="brand-slogan" data-i18n="nav_slogan">Busca anime con estilo</span>
                 </div>
             </div>
@@ -130,9 +130,9 @@
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-brand">
-                        <span class="brand-mark">AR</span>
+                        <img class="brand-mark" src="{% static 'anime_app/images/logo.png' %}" alt="Animatcher logo">
                         <div>
-                            <p class="brand-label">Anime Recommender</p>
+                            <p class="brand-label">Animatcher</p>
                             <span class="brand-slogan" data-i18n="footer_slogan">Descubre tu próximo anime favorito</span>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                         <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="footer_search">Buscar</a>
                     </div>
                     <div class="footer-meta">
-                        <p data-i18n="footer_copyright">© 2026 Anime Recommender. Todos los derechos reservados.</p>
+                        <p data-i18n="footer_copyright">© 2026 Animatcher. Todos los derechos reservados.</p>
                         <p data-i18n="footer_data_source">Datos proporcionados por MyAnimeList</p>
                     </div>
                 </div>

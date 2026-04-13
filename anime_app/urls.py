@@ -17,6 +17,7 @@ urlpatterns = [
     # Páginas de autenticación
     path("login/", views.login_page, name="login"),
     path("register/", views.register_page, name="register"),
+    path("guest/", views.guest_page, name="guest"),
     path("profile/", views.profile_page, name="profile"),
 
     # Endpoint para búsqueda de animes

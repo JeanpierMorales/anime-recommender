@@ -1,0 +1,122 @@
+{% load static %}
+        <section class="section-block auth-required hidden" id="explore">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow" data-i18n="explore_tag">Explora géneros</p>
+                    <h2 data-i18n="explore_title">Carrusel de categorías</h2>
+                </div>
+                <div class="carousel-controls">
+                    <button class="pager" data-target="#genreCarousel" data-direction="left">←</button>
+                    <button class="pager" data-target="#genreCarousel" data-direction="right">→</button>
+                </div>
+            </div>
+            <div class="horizontal-carousel" id="genreCarousel">
+                <article class="carousel-card genre-card" data-genre-id="1" data-i18n="genre_action">Acción</article>
+                <article class="carousel-card genre-card" data-genre-id="2" data-i18n="genre_adventure">Aventura</article>
+                <article class="carousel-card genre-card" data-genre-id="4" data-i18n="genre_comedy">Comedia</article>
+                <article class="carousel-card genre-card" data-genre-id="10" data-i18n="genre_fantasy">Fantasía</article>
+                <article class="carousel-card genre-card" data-genre-id="22" data-i18n="genre_romance">Romance</article>
+                <article class="carousel-card genre-card" data-genre-id="24" data-i18n="genre_scifi">Ciencia Ficción</article>
+                <article class="carousel-card genre-card" data-genre-id="36" data-i18n="genre_slice_of_life">Vida Cotidiana</article>
+                <article class="carousel-card genre-card" data-genre-id="37" data-i18n="genre_supernatural">Sobrenatural</article>
+                <article class="carousel-card genre-card" data-genre-id="7" data-i18n="genre_mystery">Misterio</article>
+                <article class="carousel-card genre-card" data-genre-id="14" data-i18n="genre_horror">Terror</article>
+                <article class="carousel-card genre-card" data-genre-id="18" data-i18n="genre_mecha">Mecha</article>
+                <article class="carousel-card genre-card" data-genre-id="30" data-i18n="genre_sports">Deportes</article>
+                <article class="carousel-card genre-card" data-genre-id="19" data-i18n="genre_music">Música</article>
+                <article class="carousel-card genre-card" data-genre-id="62" data-i18n="genre_isekai">Isekai</article>
+            </div>
+        </section>
+
+        <section class="section-block search-section auth-required hidden" id="searchSection">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow" data-i18n="search_tag">Búsqueda dinámica</p>
+                    <h2 data-i18n="search_title">Encuentra anime en segundos</h2>
+                </div>
+            </div>
+            <div class="search-panel">
+                <label for="searchInput" data-i18n="search_label">Buscar anime</label>
+                <div class="search-row">
+                    <input id="searchInput" type="search" placeholder="Naruto, Demon Slayer" autocomplete="off" data-placeholder-es="Naruto, Demon Slayer" data-placeholder-en="Naruto, Demon Slayer">
+                    <button class="primary-button" id="searchButton" data-i18n="search_button">Buscar</button>
+                </div>
+                <p id="searchHint" class="hint" data-i18n="search_hint">Escribe al menos 2 caracteres y presiona Buscar.</p>
+            </div>
+
+            <div class="results-panel">
+                <div class="results-header">
+                    <div>
+                        <h3 data-i18n="results_title">Resultados</h3>
+                        <p class="hint" data-i18n="results_description">Haz clic en un anime para ver más información.</p>
+                    </div>
+                    <span id="resultCount">0</span>
+                </div>
+                <div id="resultsList" class="results-list"></div>
+                <div id="paginationControls" class="pagination-controls"></div>
+            </div>
+        </section>
+
+        <section class="section-block detail-section auth-required hidden">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow" data-i18n="detail_tag">Detalle instantáneo</p>
+                    <h2 data-i18n="detail_title">Vista completa del anime</h2>
+                </div>
+            </div>
+            <div class="detail-panel">
+                <div class="detail-card hidden" id="detailCard">
+                    <button class="close-detail" id="closeDetail">❌</button>
+                    <div class="detail-content">
+                        <div class="detail-image-section">
+                            <img id="detailImage" src="" alt="Anime image">
+                        </div>
+                        <div class="detail-info-section">
+                            <h2 id="detailTitle">Título</h2>
+                            <p id="detailGenres" class="detail-genres"></p>
+                            <span id="detailStatus" class="pill"></span>
+                            <div class="detail-metrics">
+                                <div><strong data-i18n="detail_episodes">Episodios: </strong><span id="detailEpisodes">-</span></div>
+                                <div><strong data-i18n="detail_score">Score: </strong><span id="detailScore">-</span></div>
+                                <div><strong data-i18n="detail_rank">Ranking: </strong><span id="detailRank">-</span></div>
+                            </div>
+                            <div class="detail-synopsis">
+                                <h3 data-i18n="detail_synopsis_title">Sinopsis</h3>
+                                <p id="detailSynopsis"></p>
+                            </div>
+                            <div class="detail-actions">
+                                <a id="detailUrl" href="#" target="_blank" rel="noreferrer" data-i18n="detail_mal_button">Ver en MyAnimeList</a>
+                                <button id="favButton" class="secondary-button hidden" data-i18n="detail_add_favorite">⭐ Añadir a favoritos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-placeholder" id="detailPlaceholder">
+                    <div class="placeholder-content">
+                        <h3 data-i18n="detail_placeholder_title">Selecciona un anime</h3>
+                        <p data-i18n="detail_placeholder_body">Haz clic en cualquier anime de los resultados para ver su información detallada aquí.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer auth-required hidden">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img class="brand-mark" src="{% static 'anime_app/images/logo.png' %}" alt="Animatcher logo">
+                    <div>
+                        <p class="brand-label">Animatcher</p>
+                        <span class="brand-slogan" data-i18n="footer_slogan">Descubre tu próximo anime favorito</span>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="#hero" data-i18n="footer_home">Inicio</a>
+                    <a href="#explore" data-i18n="footer_explore">Explorar</a>
+                    <a href="#searchSection" data-i18n="footer_search">Buscar</a>
+                </div>
+                <div class="footer-meta">
+                    <p data-i18n="footer_copyright">© 2026 Animatcher. Todos los derechos reservados.</p>
+                    <p data-i18n="footer_data_source">Datos proporcionados por MyAnimeList</p>
+                </div>
+            </div>
+        </footer>

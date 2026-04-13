@@ -1,4 +1,4 @@
-// Anime Recommender - Frontend JavaScript 
+// Animatcher - Frontend JavaScript 
 
 // ===== ELEMENTOS DEL DOM =====
 // Autenticación
@@ -27,6 +27,8 @@ const searchInput = document.getElementById('searchInput'); // Input de búsqued
 const searchButton = document.getElementById('searchButton'); // Botón de búsqueda
 const heroSearchButton = document.getElementById('heroSearchButton'); // Botón de búsqueda en la sección hero
 const guestButton = document.getElementById('guestButton'); // Botón para continuar como invitado
+const heroSearch = document.getElementById('heroSearch'); // Contenedor de búsqueda en hero
+const heroSearchInput = document.getElementById('heroSearchInput'); // Input de búsqueda en hero
 const themeToggle = document.getElementById('themeToggle'); // Botón para cambiar tema
 const langToggle = document.getElementById('langToggle'); // Botón para cambiar idioma
 const resultsList = document.getElementById('resultsList'); //  Contenedor de resultados de búsqueda
@@ -120,7 +122,7 @@ const translations = {
         footer_home: 'Inicio',
         footer_explore: 'Explorar',
         footer_search: 'Buscar',
-        footer_copyright: '© 2026 Anime Recommender. Todos los derechos reservados.',
+        footer_copyright: '© 2026 Animatcher. Todos los derechos reservados.',
         footer_data_source: 'Datos proporcionados por MyAnimeList',
         nav_guest: 'Invitado',
         nav_login: 'Ingresar',
@@ -205,7 +207,7 @@ const translations = {
         footer_home: 'Home',
         footer_explore: 'Explore',
         footer_search: 'Search',
-        footer_copyright: '© 2026 Anime Recommender. All rights reserved.',
+        footer_copyright: '© 2026 Animatcher. All rights reserved.',
         footer_data_source: 'Data provided by MyAnimeList',
         nav_guest: 'Guest',
         nav_login: 'Sign In',
@@ -272,47 +274,77 @@ function scrollCarousel(targetSelector, direction) {
     carousel.scrollBy({ left: direction === 'right' ? amount : -amount, behavior: 'smooth' });
 }
 
-searchButton.addEventListener('click', () => {
-    const query = searchInput.value.trim();
-    if (query.length < 2) {
-        alert(translations[currentLanguage].search_hint);
-        return;
-    }
-    fetchAnimeResults(query);
-});
-
-heroSearchButton.addEventListener('click', () => {
-    searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    searchInput.focus();
-});
-
-searchInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        searchButton.click();
-    }
-});
-
-closeDetail.addEventListener('click', () => {
-    detailCard.classList.add('hidden');
-    detailPlaceholder.classList.remove('hidden');
-});
-
-themeToggle.addEventListener('click', () => {
-    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-});
-
-langToggle.addEventListener('click', () => {
-    applyLanguage(currentLanguage === 'es' ? 'en' : 'es');
-});
-
-carouselButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        const target = button.dataset.target;
-        const direction = button.dataset.direction;
-        scrollCarousel(target, direction);
+if (searchButton) {
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if (query.length < 2) {
+            alert(translations[currentLanguage].search_hint);
+            return;
+        }
+        fetchAnimeResults(query);
     });
-});
+}
+
+if (heroSearchButton) {
+    heroSearchButton.addEventListener('click', () => {
+        const query = heroSearchInput.value.trim();
+        if (query.length < 2) {
+            alert(translations[currentLanguage].search_hint);
+            return;
+        }
+        fetchAnimeResults(query);
+        // Scroll to results
+        searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+
+if (searchInput) {
+    searchInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            searchButton.click();
+        }
+    });
+}
+
+if (heroSearchInput) {
+    heroSearchInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            heroSearchButton.click();
+        }
+    });
+}
+
+// EventListeners seguros (verifican que el elemento existe)
+if (closeDetail) {
+    closeDetail.addEventListener('click', () => {
+        detailCard.classList.add('hidden');
+        detailPlaceholder.classList.remove('hidden');
+    });
+}
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+}
+
+if (langToggle) {
+    langToggle.addEventListener('click', () => {
+        applyLanguage(currentLanguage === 'es' ? 'en' : 'es');
+    });
+}
+
+if (carouselButtons && carouselButtons.length > 0) {
+    carouselButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const target = button.dataset.target;
+            const direction = button.dataset.direction;
+            scrollCarousel(target, direction);
+        });
+    });
+}
 
 // Event listeners for genre cards
 document.querySelectorAll('.genre-card').forEach((card) => {
@@ -323,31 +355,55 @@ document.querySelectorAll('.genre-card').forEach((card) => {
 });
 
 async function fetchAnimeResults(query) {
+    if (!resultsList) {
+        console.error('resultsList element not found');
+        return;
+    }
+    
     resultsList.innerHTML = '<p class="hint">Buscando...</p>';
     resultCount.textContent = '0';
     currentPage = 1; 
 
     try {
-        const response = await fetch(`/anime/search/?query=${encodeURIComponent(query)}`);
+        console.log('Buscando:', query);
+        const url = `/anime/search/?query=${encodeURIComponent(query)}`;
+        console.log('URL:', url);
+        
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error('Error en la búsqueda');
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log('Data received:', data);
+        
         allResults = data.results || [];
+        console.log('Total results:', allResults.length);
+        
         resultCount.textContent = allResults.length;
         renderResultsPage();
 
     } catch (error) {
+        console.error('Error completo:', error);
         resultsList.innerHTML = `<p class="hint">${currentLanguage === 'en' ? 'Search failed. Please try again.' : 'No se pudo completar la búsqueda. Intenta de nuevo.'}</p>`;
-        console.error(error);
     }
 }
 
 function renderResultsPage() {
+    console.log('renderResultsPage called with', allResults.length, 'results');
+    
+    if (!resultsList) {
+        console.error('resultsList is null');
+        return;
+    }
+    
     if (!allResults.length) {
         resultsList.innerHTML = `<p class="hint">${currentLanguage === 'en' ? 'No results found.' : 'No se encontraron resultados.'}</p>`;
-        paginationControls.innerHTML = '';
+        if (paginationControls) {
+            paginationControls.innerHTML = '';
+        }
         return;
     }
 
@@ -514,7 +570,7 @@ async function loginUser(username, password) {
             localStorage.removeItem('isGuest');
             updateAuthUI();
             showAuthenticatedSections();
-            closeAuthModal();
+            closeAuthModalWindow();
             showToast(currentLanguage === 'en' ? 'Welcome!' : '¡Bienvenido!', 'success');
             return true;
         } else {
@@ -547,7 +603,7 @@ async function registerUser(userData) {
             localStorage.removeItem('isGuest');
             updateAuthUI();
             showAuthenticatedSections();
-            closeAuthModal();
+            closeAuthModalWindow();
             showToast(currentLanguage === 'en' ? 'Account created successfully!' : '¡Cuenta creada exitosamente!', 'success');
             return true;
         } else {
@@ -639,6 +695,15 @@ function showAuthenticatedSections() {
             section.classList.add('hidden');
         }
     });
+    
+    // Mostrar búsqueda en hero para invitados
+    if (heroSearch) {
+        if (isGuest) {
+            heroSearch.classList.remove('hidden');
+        } else {
+            heroSearch.classList.add('hidden');
+        }
+    }
 }
 
 // Verificar autorización al cargar la página
@@ -751,7 +816,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-function closeAuthModal() {
+function closeAuthModalWindow() {
     authModal.classList.add('hidden');
     loginForm.classList.add('hidden');
     registerForm.classList.add('hidden');
@@ -777,22 +842,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     showAuthenticatedSections();
 });
 
-// Event listeners de autenticación
-authToggle.addEventListener('click', () => {
-    authModal.classList.remove('hidden');
-    loginForm.classList.remove('hidden');
-    registerForm.classList.add('hidden');
-    tabButtons[0].classList.add('active');
-    tabButtons[1].classList.remove('active');
-});
+// Event listeners de autenticación (seguros - verifican existencia)
+if (authToggle) {
+    authToggle.addEventListener('click', () => {
+        authModal.classList.remove('hidden');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        if (tabButtons && tabButtons.length > 0) {
+            tabButtons[0].classList.add('active');
+            tabButtons[1].classList.remove('active');
+        }
+    });
+}
 
 if (registerToggle) {
     registerToggle.addEventListener('click', () => {
         authModal.classList.remove('hidden');
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        tabButtons[0].classList.remove('active');
-        tabButtons[1].classList.add('active');
+        if (tabButtons && tabButtons.length > 0) {
+            tabButtons[0].classList.remove('active');
+            tabButtons[1].classList.add('active');
+        }
     });
 }
 
@@ -806,6 +877,10 @@ if (guestButton) {
         localStorage.setItem('isGuest', 'true');
         updateAuthUI();
         showAuthenticatedSections();
+        const guestSection = document.getElementById('explore');
+        if (guestSection) {
+            guestSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     });
 }
 
@@ -820,72 +895,100 @@ if (guestToggle) {
     });
 }
 
-closeAuthModal.addEventListener('click', closeAuthModal);
+if (closeAuthModal) {
+    closeAuthModal.addEventListener('click', closeAuthModalWindow);
+}
 
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const tab = button.dataset.tab;
+if (tabButtons && tabButtons.length > 0) {
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tab = button.dataset.tab;
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            }
+        });
+    });
+}
+
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
         
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
+        if (loginError) {
+            loginError.classList.add('hidden');
+        }
         
-        if (tab === 'login') {
-            loginForm.classList.remove('hidden');
-            registerForm.classList.add('hidden');
-        } else {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
+        try {
+            await loginUser(username, password);
+        } catch (error) {
+            if (loginError) {
+                loginError.textContent = error.message;
+                loginError.classList.remove('hidden');
+            }
         }
     });
-});
+}
 
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    loginError.classList.add('hidden');
-    
-    try {
-        await loginUser(username, password);
-    } catch (error) {
-        loginError.textContent = error.message;
-        loginError.classList.remove('hidden');
-    }
-});
-
-registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const userData = {
-        username: document.getElementById('registerUsername').value,
-        email: document.getElementById('registerEmail').value,
-        password: document.getElementById('registerPassword').value,
-        password_confirm: document.getElementById('registerPasswordConfirm').value,
-    };
-    
-    registerError.classList.add('hidden');
-    
-    try {
-        await registerUser(userData);
-    } catch (error) {
-        if (error.message.includes('errors')) {
-            const errorData = JSON.parse(error.message);
-            registerError.innerHTML = Object.values(errorData.errors).flat().join('<br>');
-        } else {
-            registerError.textContent = error.message;
+if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userData = {
+            username: document.getElementById('registerUsername').value,
+            email: document.getElementById('registerEmail').value,
+            password: document.getElementById('registerPassword').value,
+            password_confirm: document.getElementById('registerPasswordConfirm').value,
+        };
+        
+        if (registerError) {
+            registerError.classList.add('hidden');
         }
-        registerError.classList.remove('hidden');
-    }
-});
+        
+        try {
+            await registerUser(userData);
+        } catch (error) {
+            if (error.message.includes('errors')) {
+                const errorData = JSON.parse(error.message);
+                if (registerError) {
+                    registerError.innerHTML = Object.values(errorData.errors).flat().join('<br>');
+                }
+            } else {
+                if (registerError) {
+                    registerError.textContent = error.message;
+                }
+            }
+            if (registerError) {
+                registerError.classList.remove('hidden');
+            }
+        }
+    });
+}
 
-userMenu.addEventListener('click', () => {
-    userDropdown.classList.toggle('hidden');
-});
+if (userMenu) {
+    userMenu.addEventListener('click', () => {
+        if (userDropdown) {
+            userDropdown.classList.toggle('hidden');
+        }
+    });
+}
 
-logoutBtn.addEventListener('click', () => {
-    logoutUser();
-    userDropdown.classList.add('hidden');
-});
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        logoutUser();
+        if (userDropdown) {
+            userDropdown.classList.add('hidden');
+        }
+    });
+}
 
 // Event listener para botón de favoritos
 favButton.addEventListener('click', () => {

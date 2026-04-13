@@ -39,6 +39,13 @@ def register_page(request):
     return render(request, "anime_app/register.html")
 
 
+def guest_page(request):
+    """
+    Vista para la página de invitado.
+    """
+    return render(request, "anime_app/guest.html")
+
+
 def profile_page(request):
     """
     Vista para la página de perfil del usuario.

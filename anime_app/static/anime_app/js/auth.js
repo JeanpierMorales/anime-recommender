@@ -1,4 +1,4 @@
-// Anime Recommender - Auth Pages JavaScript
+// Animatcher - Auth Pages JavaScript
 
 // ===== ELEMENTOS DEL DOM =====
 const themeToggle = document.getElementById('themeToggle');

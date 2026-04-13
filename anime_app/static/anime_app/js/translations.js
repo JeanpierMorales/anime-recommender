@@ -1,4 +1,4 @@
-// Anime Recommender - Translations
+// Animatcher - Translations
 const translations = {
     es: {
         nav_slogan: 'Busca anime con estilo',
@@ -13,6 +13,8 @@ const translations = {
         hero_subtitle: 'Interfaz limpia con búsqueda dinámica, resultados en vivo y vista de detalle. Ideal para la base del frontend de tu aplicación.',
         hero_cta: 'Comenzar búsqueda',
         hero_roadmap: 'Ver roadmap',
+        guest_hero_title: 'Explora Animatcher como invitado',
+        guest_hero_subtitle: 'Busca anime, navega por géneros y descubre detalles sin iniciar sesión.',
         hero_metrics_1_title: 'Resultados en vivo',
         hero_metrics_1_body: 'Busca sin recargar y descubre anime al instante.',
         hero_metrics_2_title: 'Vista de detalle',
@@ -59,7 +61,7 @@ const translations = {
         footer_home: 'Inicio',
         footer_explore: 'Explorar',
         footer_search: 'Buscar',
-        footer_copyright: '© 2026 Anime Recommender. Todos los derechos reservados.',
+        footer_copyright: '© 2026 Animatcher. Todos los derechos reservados.',
         footer_data_source: 'Datos proporcionados por MyAnimeList',
         nav_login: 'Ingresar',
         tab_login: 'Ingresar',
@@ -143,7 +145,7 @@ const translations = {
         footer_home: 'Home',
         footer_explore: 'Explore',
         footer_search: 'Search',
-        footer_copyright: '© 2026 Anime Recommender. All rights reserved.',
+        footer_copyright: '© 2026 Animatcher. All rights reserved.',
         footer_data_source: 'Data provided by MyAnimeList',
         nav_login: 'Sign In',
         tab_login: 'Sign In',

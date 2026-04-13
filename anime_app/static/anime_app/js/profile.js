@@ -1,4 +1,4 @@
-// Anime Recommender - Profile Page JavaScript
+// Animatcher - Profile Page JavaScript
 
 // ===== ELEMENTOS DEL DOM =====
 const themeToggle = document.getElementById('themeToggle');
