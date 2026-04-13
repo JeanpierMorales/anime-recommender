@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Anime Recommender</title>
+    <link rel="stylesheet" href="{% static 'anime_app/css/styles.css' %}">
+</head>
+<body class="theme-light">
+    <div class="page-container">
+        <nav class="site-nav">
+            <div class="brand">
+                <span class="brand-mark">AR</span>
+                <div>
+                    <p class="brand-label">Anime Recommender</p>
+                    <span class="brand-slogan" data-i18n="nav_slogan">Busca anime con estilo</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'anime_app:index' %}" data-i18n="nav_home">Inicio</a>
+                <a href="{% url 'anime_app:index' %}#explore" data-i18n="nav_explore">Explorar</a>
+                <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="nav_search">Buscar</a>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-button" id="langToggle">ES</button>
+                <button class="nav-button" id="themeToggle" aria-label="Cambiar modo">🌙</button>
+                <a href="{% url 'anime_app:register' %}" class="nav-button" data-i18n="tab_register">Registrarse</a>
+            </div>
+        </nav>
+
+        <header class="hero" id="hero">
+            <div class="hero-copy">
+                <h1 data-i18n="login_title">Inicia sesión</h1>
+                <p data-i18n="login_hint">¿No tienes cuenta? Regístrate arriba.</p>
+                <div class="hero-actions">
+                    <a href="{% url 'anime_app:register' %}" class="secondary-button" data-i18n="tab_register">Registrarse</a>
+                </div>
+            </div>
+            <div class="hero-panel">
+                <div class="auth-form-card">
+                    <h3 data-i18n="tab_login">Ingresar</h3>
+                    <form id="loginForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="loginUsername" data-i18n="login_username">Nombre de usuario</label>
+                            <input type="text" id="loginUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword" data-i18n="login_password">Contraseña</label>
+                            <input type="password" id="loginPassword" name="password" required>
+                        </div>
+                        <button type="submit" class="primary-button full-width" data-i18n="login_button">Ingresar</button>
+                        <div id="loginError" class="error-message hidden"></div>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Seguro</h3>
+                        <p>Tu información está protegida con encriptación de última generación.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Rápido</h3>
+                        <p>Accede instantáneamente a tu cuenta y comienza a explorar anime.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <h3>Personalizado</h3>
+                        <p>Guarda tus favoritos y recibe recomendaciones basadas en tus gustos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <span class="brand-mark">AR</span>
+                        <div>
+                            <p class="brand-label">Anime Recommender</p>
+                            <span class="brand-slogan" data-i18n="footer_slogan">Descubre tu próximo anime favorito</span>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <a href="{% url 'anime_app:index' %}" data-i18n="footer_home">Inicio</a>
+                        <a href="{% url 'anime_app:index' %}#explore" data-i18n="footer_explore">Explorar</a>
+                        <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="footer_search">Buscar</a>
+                    </div>
+                    <div class="footer-meta">
+                        <p data-i18n="footer_copyright">© 2026 Anime Recommender. Todos los derechos reservados.</p>
+                        <p data-i18n="footer_data_source">Datos proporcionados por MyAnimeList</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'anime_app/js/translations.js' %}"></script>
+    <script src="{% static 'anime_app/js/auth.js' %}"></script>
+</body>
+</html>

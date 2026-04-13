@@ -1,4 +1,26 @@
 // Anime Recommender - Frontend JavaScript 
+
+// ===== ELEMENTOS DEL DOM =====
+// Autenticación
+const authToggle = document.getElementById('authToggle');
+const authModal = document.getElementById('authModal');
+const closeAuthModal = document.getElementById('closeAuthModal');
+const userMenu = document.getElementById('userMenu');
+const userMenuUsername = document.getElementById('userMenuUsername');
+const userDropdown = document.getElementById('userDropdown');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Formularios de autenticación
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const loginError = document.getElementById('loginError');
+const registerError = document.getElementById('registerError');
+const tabButtons = document.querySelectorAll('.tab-btn');
+
+// Favoritos
+const favButton = document.getElementById('favButton');
+
+// Búsqueda de anime
 const searchInput = document.getElementById('searchInput'); // Input de búsqueda
 const searchButton = document.getElementById('searchButton'); // Botón de búsqueda
 const heroSearchButton = document.getElementById('heroSearchButton'); // Botón de búsqueda en la sección hero
@@ -24,14 +46,18 @@ const detailScore = document.getElementById('detailScore'); // Puntuación del a
 const detailRank = document.getElementById('detailRank'); // Rango del anime en la vista de detalle
 const detailUrl = document.getElementById('detailUrl'); // URL del anime en la vista de detalle
 
-// Pagination variables
+// ===== VARIABLES DE ESTADO =====
 let currentPage = 1;
 const resultsPerPage = 4; // Número de resultados a mostrar por página
 let allResults = []; 
 const paginationControls = document.getElementById('paginationControls'); // Contenedor para los controles de paginación
 
+// Estado de autenticación
+let authToken = localStorage.getItem('authToken');
+let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+let currentAnimeId = null; // Para guardar el anime actual en favoritos
+
 const translations = {
-    // Traducciones para español e inglés
     es: {
         nav_slogan: 'Busca anime con estilo',
         nav_home: 'Inicio',
@@ -85,9 +111,36 @@ const translations = {
         roadmap_week4: 'Login, registro y guardar favoritos.',
         roadmap_week5: 'Ratings, recomendaciones y lista del usuario.',
         roadmap_week6: 'UI pulida, errores y despliegue.',
+        footer_slogan: 'Descubre tu próximo anime favorito',
+        footer_home: 'Inicio',
+        footer_explore: 'Explorar',
+        footer_search: 'Buscar',
+        footer_copyright: '© 2026 Anime Recommender. Todos los derechos reservados.',
+        footer_data_source: 'Datos proporcionados por MyAnimeList',
+        nav_login: 'Ingresar',
+        tab_login: 'Ingresar',
+        tab_register: 'Registrarse',
+        login_title: 'Inicia sesión',
+        login_username: 'Nombre de usuario',
+        login_password: 'Contraseña',
+        login_button: 'Ingresar',
+        login_hint: '¿No tienes cuenta? Regístrate arriba.',
+        register_title: 'Crea tu cuenta',
+        register_username: 'Nombre de usuario',
+        register_username_hint: '3-150 caracteres, letras, números, guiones',
+        register_email: 'Email',
+        register_password: 'Contraseña',
+        register_password_hint: 'Mínimo 8 caracteres, mayúscula, número, carácter especial',
+        register_password_confirm: 'Confirmar contraseña',
+        register_button: 'Registrarse',
+        register_hint: '¿Ya tienes cuenta? Inicia sesión arriba.',
+        menu_favorites: '⭐ Mis favoritos',
+        menu_profile: '👤 Mi perfil',
+        menu_logout: '🚪 Cerrar sesión',
+        detail_add_favorite: '⭐ Añadir a favoritos',
+        detail_remove_favorite: '⭐ Quitar de favoritos'
     },
     en: {
-        //  Traducciones para inglés
         nav_slogan: 'Search anime with style',
         nav_home: 'Home',
         nav_explore: 'Explore',
@@ -140,6 +193,34 @@ const translations = {
         roadmap_week4: 'Login, register and save favorites.',
         roadmap_week5: 'Ratings, recommendations and user list.',
         roadmap_week6: 'Polished UI, error handling and deploy.',
+        footer_slogan: 'Discover your next favorite anime',
+        footer_home: 'Home',
+        footer_explore: 'Explore',
+        footer_search: 'Search',
+        footer_copyright: '© 2026 Anime Recommender. All rights reserved.',
+        footer_data_source: 'Data provided by MyAnimeList',
+        nav_login: 'Sign In',
+        tab_login: 'Sign In',
+        tab_register: 'Register',
+        login_title: 'Sign in',
+        login_username: 'Username',
+        login_password: 'Password',
+        login_button: 'Sign In',
+        login_hint: 'No account? Register above.',
+        register_title: 'Create your account',
+        register_username: 'Username',
+        register_username_hint: '3-150 characters, letters, numbers, hyphens',
+        register_email: 'Email',
+        register_password: 'Password',
+        register_password_hint: 'Minimum 8 characters, uppercase, number, special character',
+        register_password_confirm: 'Confirm password',
+        register_button: 'Register',
+        register_hint: 'Already have an account? Sign in above.',
+        menu_favorites: '⭐ My favorites',
+        menu_profile: '👤 My profile',
+        menu_logout: '🚪 Sign Out',
+        detail_add_favorite: '⭐ Add to favorites',
+        detail_remove_favorite: '⭐ Remove from favorites'
     }
 };
 
@@ -166,7 +247,7 @@ function applyLanguage(lang) {
         }
     });
     langToggle.textContent = lang.toUpperCase();
-    currentLanguage = lang;
+    currentPage = lang;
     localStorage.setItem('animeLanguage', lang);
     const placeholder = searchInput.dataset[`placeholder${lang.toUpperCase()}`];
     if (placeholder) {
@@ -184,7 +265,7 @@ function scrollCarousel(targetSelector, direction) {
 searchButton.addEventListener('click', () => {
     const query = searchInput.value.trim();
     if (query.length < 2) {
-        alert(translations[currentLanguage].search_hint);
+        alert(translations[currentPage].search_hint);
         return;
     }
     fetchAnimeResults(query);
@@ -400,5 +481,329 @@ async function fetchAnimeByGenre(genreId) {
     }
 }
 
-applyTheme(currentTheme);
-applyLanguage(currentLanguage);
+// ===== FUNCIONES DE AUTENTICACIÓN =====
+
+async function loginUser(username, password) {
+    try {
+        const response = await fetch('/auth/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            authToken = data.token;
+            currentUser = data.user;
+            localStorage.setItem('authToken', authToken);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAuthUI();
+            closeAuthModal();
+            showToast(currentLanguage === 'en' ? 'Welcome!' : '¡Bienvenido!', 'success');
+            return true;
+        } else {
+            throw new Error(data.message || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+}
+
+async function registerUser(userData) {
+    try {
+        const response = await fetch('/auth/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            authToken = data.token;
+            currentUser = data.user;
+            localStorage.setItem('authToken', authToken);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateAuthUI();
+            closeAuthModal();
+            showToast(currentLanguage === 'en' ? 'Account created successfully!' : '¡Cuenta creada exitosamente!', 'success');
+            return true;
+        } else {
+            throw new Error(data.message || 'Registration failed');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+}
+
+function logoutUser() {
+    authToken = null;
+    currentUser = null;
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    updateAuthUI();
+    showToast(currentLanguage === 'en' ? 'Logged out' : 'Sesión cerrada', 'info');
+}
+
+async function verifyToken() {
+    if (!authToken) return false;
+
+    try {
+        const response = await fetch('/auth/verify/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            currentUser = data.user;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            return true;
+        } else {
+            logoutUser();
+            return false;
+        }
+    } catch (error) {
+        console.error('Token verification error:', error);
+        logoutUser();
+        return false;
+    }
+}
+
+function updateAuthUI() {
+    if (authToken && currentUser) {
+        // Usuario autenticado
+        authToggle.classList.add('hidden');
+        userMenu.classList.remove('hidden');
+        userMenuUsername.textContent = currentUser.username;
+        favButton.classList.remove('hidden');
+    } else {
+        // Usuario no autenticado
+        authToggle.classList.remove('hidden');
+        userMenu.classList.add('hidden');
+        favButton.classList.add('hidden');
+    }
+}
+
+// ===== FUNCIONES DE FAVORITOS =====
+
+async function checkIfFavorite(malId) {
+    if (!authToken) return false;
+
+    try {
+        const response = await fetch('/api/user/favorites/', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            return data.favorites.some(fav => fav.mal_id === malId);
+        }
+    } catch (error) {
+        console.error('Error checking favorite:', error);
+    }
+    return false;
+}
+
+async function toggleFavorite(malId) {
+    if (!authToken) {
+        showToast(currentLanguage === 'en' ? 'Please log in to add favorites' : 'Inicia sesión para añadir favoritos', 'warning');
+        authModal.classList.remove('hidden');
+        return;
+    }
+
+    const isFavorite = await checkIfFavorite(malId);
+    const action = isFavorite ? 'remove' : 'add';
+
+    try {
+        const response = await fetch('/api/user/favorites/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ mal_id: malId, action })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+            updateFavoriteButton(malId, !isFavorite);
+            showToast(
+                isFavorite 
+                    ? (currentLanguage === 'en' ? 'Removed from favorites' : 'Removido de favoritos')
+                    : (currentLanguage === 'en' ? 'Added to favorites' : 'Añadido a favoritos'),
+                'success'
+            );
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Favorite toggle error:', error);
+        showToast(currentLanguage === 'en' ? 'Error updating favorites' : 'Error actualizando favoritos', 'error');
+    }
+}
+
+function updateFavoriteButton(malId, isFavorite) {
+    if (currentAnimeId === malId) {
+        favButton.textContent = isFavorite 
+            ? (currentLanguage === 'en' ? '⭐ Remove from favorites' : '⭐ Quitar de favoritos')
+            : (currentLanguage === 'en' ? '⭐ Add to favorites' : '⭐ Añadir a favoritos');
+        favButton.dataset.isFavorite = isFavorite;
+    }
+}
+
+// ===== FUNCIONES DE UI =====
+
+function showToast(message, type = 'info') {
+    // Crear toast temporal
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#6b7280'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease-out;
+    `;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function closeAuthModal() {
+    authModal.classList.add('hidden');
+    loginForm.classList.add('hidden');
+    registerForm.classList.add('hidden');
+    loginError.classList.add('hidden');
+    registerError.classList.add('hidden');
+}
+
+// ===== EVENT LISTENERS =====
+
+// Verificar token al cargar la página
+document.addEventListener('DOMContentLoaded', async () => {
+    // Aplicar tema e idioma guardados
+    applyTheme(currentTheme);
+    applyLanguage(currentLanguage);
+    
+    if (authToken) {
+        await verifyToken();
+    }
+    updateAuthUI();
+});
+
+// Event listeners de autenticación
+authToggle.addEventListener('click', () => {
+    authModal.classList.remove('hidden');
+    loginForm.classList.remove('hidden');
+    registerForm.classList.add('hidden');
+    tabButtons[0].classList.add('active');
+    tabButtons[1].classList.remove('active');
+});
+
+closeAuthModal.addEventListener('click', closeAuthModal);
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const tab = button.dataset.tab;
+        
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+        } else {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+        }
+    });
+});
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    loginError.classList.add('hidden');
+    
+    try {
+        await loginUser(username, password);
+    } catch (error) {
+        loginError.textContent = error.message;
+        loginError.classList.remove('hidden');
+    }
+});
+
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userData = {
+        username: document.getElementById('registerUsername').value,
+        email: document.getElementById('registerEmail').value,
+        password: document.getElementById('registerPassword').value,
+        password_confirm: document.getElementById('registerPasswordConfirm').value,
+    };
+    
+    registerError.classList.add('hidden');
+    
+    try {
+        await registerUser(userData);
+    } catch (error) {
+        if (error.message.includes('errors')) {
+            const errorData = JSON.parse(error.message);
+            registerError.innerHTML = Object.values(errorData.errors).flat().join('<br>');
+        } else {
+            registerError.textContent = error.message;
+        }
+        registerError.classList.remove('hidden');
+    }
+});
+
+userMenu.addEventListener('click', () => {
+    userDropdown.classList.toggle('hidden');
+});
+
+logoutBtn.addEventListener('click', () => {
+    logoutUser();
+    userDropdown.classList.add('hidden');
+});
+
+// Event listener para botón de favoritos
+favButton.addEventListener('click', () => {
+    if (currentAnimeId) {
+        toggleFavorite(currentAnimeId);
+    }
+});
+
+// Cerrar dropdown al hacer clic fuera
+document.addEventListener('click', (e) => {
+    if (!userMenu.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+    }
+});

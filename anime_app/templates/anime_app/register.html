@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse - Anime Recommender</title>
+    <link rel="stylesheet" href="{% static 'anime_app/css/styles.css' %}">
+</head>
+<body class="theme-light">
+    <div class="page-container">
+        <nav class="site-nav">
+            <div class="brand">
+                <span class="brand-mark">AR</span>
+                <div>
+                    <p class="brand-label">Anime Recommender</p>
+                    <span class="brand-slogan" data-i18n="nav_slogan">Busca anime con estilo</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'anime_app:index' %}" data-i18n="nav_home">Inicio</a>
+                <a href="{% url 'anime_app:index' %}#explore" data-i18n="nav_explore">Explorar</a>
+                <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="nav_search">Buscar</a>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-button" id="langToggle">ES</button>
+                <button class="nav-button" id="themeToggle" aria-label="Cambiar modo">🌙</button>
+                <a href="{% url 'anime_app:login' %}" class="nav-button" data-i18n="tab_login">Ingresar</a>
+            </div>
+        </nav>
+
+        <header class="hero" id="hero">
+            <div class="hero-copy">
+                <h1 data-i18n="register_title">Crea tu cuenta</h1>
+                <p data-i18n="register_hint">¿Ya tienes cuenta? Inicia sesión arriba.</p>
+                <div class="hero-actions">
+                    <a href="{% url 'anime_app:login' %}" class="secondary-button" data-i18n="tab_login">Ingresar</a>
+                </div>
+            </div>
+            <div class="hero-panel">
+                <div class="auth-form-card">
+                    <h3 data-i18n="tab_register">Registrarse</h3>
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="registerUsername" data-i18n="register_username">Nombre de usuario</label>
+                            <input type="text" id="registerUsername" name="username" required>
+                            <small class="form-hint" data-i18n="register_username_hint">3-150 caracteres, letras, números, guiones</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail" data-i18n="register_email">Email</label>
+                            <input type="email" id="registerEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword" data-i18n="register_password">Contraseña</label>
+                            <input type="password" id="registerPassword" name="password" required>
+                            <small class="form-hint" data-i18n="register_password_hint">Mínimo 8 caracteres, mayúscula, número, carácter especial</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm" data-i18n="register_password_confirm">Confirmar contraseña</label>
+                            <input type="password" id="registerPasswordConfirm" name="password_confirm" required>
+                        </div>
+                        <button type="submit" class="primary-button full-width" data-i18n="register_button">Registrarse</button>
+                        <div id="registerError" class="error-message hidden"></div>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Recomendaciones</h3>
+                        <p>Recibe sugerencias personalizadas basadas en tus gustos y favoritos.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h3>Guarda Favoritos</h3>
+                        <p>Mantén una lista organizada de tus animes preferidos.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Estadísticas</h3>
+                        <p>Visualiza tus estadísticas de visualización y preferencias.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <span class="brand-mark">AR</span>
+                        <div>
+                            <p class="brand-label">Anime Recommender</p>
+                            <span class="brand-slogan" data-i18n="footer_slogan">Descubre tu próximo anime favorito</span>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <a href="{% url 'anime_app:index' %}" data-i18n="footer_home">Inicio</a>
+                        <a href="{% url 'anime_app:index' %}#explore" data-i18n="footer_explore">Explorar</a>
+                        <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="footer_search">Buscar</a>
+                    </div>
+                    <div class="footer-meta">
+                        <p data-i18n="footer_copyright">© 2026 Anime Recommender. Todos los derechos reservados.</p>
+                        <p data-i18n="footer_data_source">Datos proporcionados por MyAnimeList</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'anime_app/js/translations.js' %}"></script>
+    <script src="{% static 'anime_app/js/auth.js' %}"></script>
+</body>
+</html>

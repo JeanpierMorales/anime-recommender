@@ -14,6 +14,11 @@ urlpatterns = [
     # GET: /
     path("", views.index, name="index"),
 
+    # Páginas de autenticación
+    path("login/", views.login_page, name="login"),
+    path("register/", views.register_page, name="register"),
+    path("profile/", views.profile_page, name="profile"),
+
     # Endpoint para búsqueda de animes
     # GET: /anime/search/?query=Death+Note
     # POST: /anime/search/ con JSON: {"query": "Death Note"}
@@ -27,4 +32,17 @@ urlpatterns = [
     # GET: /anime/1/
     # Devuelve: sinopsis, episodios, score, géneros, URLs, etc.
     path("anime/<int:mal_id>/", views.anime_detail, name="anime_detail"),
+    
+    # ===== RUTAS DE AUTENTICACIÓN =====
+    # POST: /auth/register/
+    path("auth/register/", views.register, name="register"),
+    
+    # POST: /auth/login/
+    path("auth/login/", views.login, name="login"),
+    
+    # POST: /auth/verify/
+    path("auth/verify/", views.verify_token, name="verify_token"),
+    
+    # GET/POST: /api/user/favorites/
+    path("api/user/favorites/", views.user_favorites, name="user_favorites"),
 ]

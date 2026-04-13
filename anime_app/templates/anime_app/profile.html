@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Anime Recommender</title>
+    <link rel="stylesheet" href="{% static 'anime_app/css/styles.css' %}">
+</head>
+<body class="theme-light">
+    <div class="page-container">
+        <nav class="site-nav">
+            <div class="brand">
+                <span class="brand-mark">AR</span>
+                <div>
+                    <p class="brand-label">Anime Recommender</p>
+                    <span class="brand-slogan" data-i18n="nav_slogan">Busca anime con estilo</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'anime_app:index' %}" data-i18n="nav_home">Inicio</a>
+                <a href="{% url 'anime_app:index' %}#explore" data-i18n="nav_explore">Explorar</a>
+                <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="nav_search">Buscar</a>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-button" id="langToggle">ES</button>
+                <button class="nav-button" id="themeToggle" aria-label="Cambiar modo">🌙</button>
+                <button class="nav-button" id="userMenu">👤 <span id="userMenuUsername"></span></button>
+            </div>
+        </nav>
+
+        <header class="hero" id="hero">
+            <div class="hero-copy">
+                <h1 data-i18n="menu_profile">Mi perfil</h1>
+                <p>Administra tu cuenta y explora tus favoritos</p>
+                <div class="hero-actions">
+                    <button class="primary-button" id="exploreButton">Explorar más anime</button>
+                </div>
+            </div>
+            <div class="hero-panel">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <div class="profile-info">
+                            <h3 id="profileUsername"></h3>
+                            <p id="profileEmail"></p>
+                            <p id="profileJoined">Miembro desde: <span id="profileJoinedDate"></span></p>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="favoritesCount">0</span>
+                            <span class="stat-label">Favoritos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="watchTime">0h</span>
+                            <span class="stat-label">Tiempo visto</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="genresCount">0</span>
+                            <span class="stat-label">Géneros</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="profile-section">
+            <div class="container">
+                <div class="profile-content">
+                    <div class="profile-sidebar">
+                        <div class="sidebar-card">
+                            <h3>Acciones rápidas</h3>
+                            <div class="quick-actions">
+                                <button class="action-button" id="viewFavorites">
+                                    <span class="action-icon">⭐</span>
+                                    <span>Ver favoritos</span>
+                                </button>
+                                <button class="action-button" id="editProfile">
+                                    <span class="action-icon">⚙️</span>
+                                    <span>Editar perfil</span>
+                                </button>
+                                <button class="action-button" id="changePassword">
+                                    <span class="action-icon">🔒</span>
+                                    <span>Cambiar contraseña</span>
+                                </button>
+                                <button class="action-button logout-btn" id="logoutBtn">
+                                    <span class="action-icon">🚪</span>
+                                    <span data-i18n="menu_logout">Cerrar sesión</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-main">
+                        <div class="favorites-section">
+                            <h2 data-i18n="menu_favorites">⭐ Mis favoritos</h2>
+                            <div id="favoritesList" class="favorites-grid">
+                                <div class="loading-state">
+                                    <p>Cargando favoritos...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="recent-activity">
+                            <h2>Actividad reciente</h2>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon">⭐</div>
+                                    <div class="activity-content">
+                                        <p>Agregaste <strong>Naruto</strong> a favoritos</p>
+                                        <span class="activity-time">Hace 2 días</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">🔍</div>
+                                    <div class="activity-content">
+                                        <p>Buscaste animes de acción</p>
+                                        <span class="activity-time">Hace 1 semana</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <span class="brand-mark">AR</span>
+                        <div>
+                            <p class="brand-label">Anime Recommender</p>
+                            <span class="brand-slogan" data-i18n="footer_slogan">Descubre tu próximo anime favorito</span>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <a href="{% url 'anime_app:index' %}" data-i18n="footer_home">Inicio</a>
+                        <a href="{% url 'anime_app:index' %}#explore" data-i18n="footer_explore">Explorar</a>
+                        <a href="{% url 'anime_app:index' %}#searchSection" data-i18n="footer_search">Buscar</a>
+                    </div>
+                    <div class="footer-meta">
+                        <p data-i18n="footer_copyright">© 2026 Anime Recommender. Todos los derechos reservados.</p>
+                        <p data-i18n="footer_data_source">Datos proporcionados por MyAnimeList</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Dropdown del usuario -->
+        <div class="dropdown-menu hidden" id="userDropdown">
+            <a href="#" data-i18n="menu_favorites">⭐ Mis favoritos</a>
+            <a href="#" data-i18n="menu_profile">👤 Mi perfil</a>
+            <a href="#" id="logoutBtn" data-i18n="menu_logout">🚪 Cerrar sesión</a>
+        </div>
+    </div>
+
+    <script src="{% static 'anime_app/js/translations.js' %}"></script>
+    <script src="{% static 'anime_app/js/profile.js' %}"></script>
+</body>
+</html>

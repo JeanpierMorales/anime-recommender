@@ -25,6 +25,8 @@
             <div class="nav-actions">
                 <button class="nav-button" id="langToggle">ES</button>
                 <button class="nav-button" id="themeToggle" aria-label="Cambiar modo">🌙</button>
+                <button class="nav-button" id="authToggle" data-i18n="nav_login">Ingresar</button>
+                <button class="nav-button hidden" id="userMenu">👤 <span id="userMenuUsername"></span></button>
             </div>
         </nav>
 
@@ -133,7 +135,10 @@
                                 <h3 data-i18n="detail_synopsis_title">Sinopsis</h3>
                                 <p id="detailSynopsis"></p>
                             </div>
-                            <a id="detailUrl" href="#" target="_blank" rel="noreferrer" data-i18n="detail_mal_button">Ver en MyAnimeList</a>
+                            <div class="detail-actions">
+                                <a id="detailUrl" href="#" target="_blank" rel="noreferrer" data-i18n="detail_mal_button">Ver en MyAnimeList</a>
+                                <button id="favButton" class="secondary-button hidden" data-i18n="detail_add_favorite">⭐ Añadir a favoritos</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,6 +147,68 @@
                 </div>
             </div>
         </section>
+
+        <!-- ===== MODALES DE AUTENTICACIÓN ===== -->
+        <div id="authModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="close-modal" id="closeAuthModal">❌</button>
+                
+                <!-- Pestañas: Login / Registro -->
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login" data-i18n="tab_login">Ingresar</button>
+                    <button class="tab-btn" data-tab="register" data-i18n="tab_register">Registrarse</button>
+                </div>
+                
+                <!-- PANEL LOGIN -->
+                <form id="loginForm" class="auth-form active">
+                    <h2 data-i18n="login_title">Inicia sesión</h2>
+                    <div class="form-group">
+                        <label for="loginUsername" data-i18n="login_username">Nombre de usuario</label>
+                        <input id="loginUsername" type="text" required autocomplete="username" data-placeholder-es="Tu usuario" data-placeholder-en="Your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" data-i18n="login_password">Contraseña</label>
+                        <input id="loginPassword" type="password" required autocomplete="current-password" data-placeholder-es="Tu contraseña" data-placeholder-en="Your password">
+                    </div>
+                    <p id="loginError" class="form-error hidden"></p>
+                    <button type="submit" class="primary-button" data-i18n="login_button">Ingresar</button>
+                    <p class="form-hint" data-i18n="login_hint">¿No tienes cuenta? Regístrate arriba.</p>
+                </form>
+                
+                <!-- PANEL REGISTRO -->
+                <form id="registerForm" class="auth-form hidden">
+                    <h2 data-i18n="register_title">Crea tu cuenta</h2>
+                    <div class="form-group">
+                        <label for="registerUsername" data-i18n="register_username">Nombre de usuario</label>
+                        <input id="registerUsername" type="text" required autocomplete="username" data-placeholder-es="Tu usuario" data-placeholder-en="Your username">
+                        <small class="form-hint" data-i18n="register_username_hint">3-150 caracteres, letras, números, guiones</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail" data-i18n="register_email">Email</label>
+                        <input id="registerEmail" type="email" required autocomplete="email" data-placeholder-es="tu@email.com" data-placeholder-en="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword" data-i18n="register_password">Contraseña</label>
+                        <input id="registerPassword" type="password" required data-placeholder-es="Con mayúscula, número, carácter especial" data-placeholder-en="With uppercase, number, special character">
+                        <small class="form-hint" data-i18n="register_password_hint">Mínimo 8 caracteres, mayúscula, número, carácter especial</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPasswordConfirm" data-i18n="register_password_confirm">Confirmar contraseña</label>
+                        <input id="registerPasswordConfirm" type="password" required>
+                    </div>
+                    <p id="registerError" class="form-error hidden"></p>
+                    <button type="submit" class="primary-button" data-i18n="register_button">Registrarse</button>
+                    <p class="form-hint" data-i18n="register_hint">¿Ya tienes cuenta? Inicia sesión arriba.</p>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== MENÚ DE USUARIO ===== -->
+        <div id="userDropdown" class="dropdown-menu hidden">
+            <a href="{% url 'anime_app:profile' %}" data-i18n="menu_favorites">⭐ Mis favoritos</a>
+            <a href="{% url 'anime_app:profile' %}" data-i18n="menu_profile">👤 Mi perfil</a>
+            <button id="logoutBtn" data-i18n="menu_logout">🚪 Cerrar sesión</button>
+        </div>
 
         <footer class="site-footer">
             <div class="footer-content">
