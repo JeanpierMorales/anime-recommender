@@ -3,6 +3,8 @@
 // ===== ELEMENTOS DEL DOM =====
 // Autenticación
 const authToggle = document.getElementById('authToggle');
+const registerToggle = document.getElementById('registerToggle');
+const guestToggle = document.getElementById('guestToggle');
 const authModal = document.getElementById('authModal');
 const closeAuthModal = document.getElementById('closeAuthModal');
 const userMenu = document.getElementById('userMenu');
@@ -24,6 +26,7 @@ const favButton = document.getElementById('favButton');
 const searchInput = document.getElementById('searchInput'); // Input de búsqueda
 const searchButton = document.getElementById('searchButton'); // Botón de búsqueda
 const heroSearchButton = document.getElementById('heroSearchButton'); // Botón de búsqueda en la sección hero
+const guestButton = document.getElementById('guestButton'); // Botón para continuar como invitado
 const themeToggle = document.getElementById('themeToggle'); // Botón para cambiar tema
 const langToggle = document.getElementById('langToggle'); // Botón para cambiar idioma
 const resultsList = document.getElementById('resultsList'); //  Contenedor de resultados de búsqueda
@@ -55,6 +58,7 @@ const paginationControls = document.getElementById('paginationControls'); // Con
 // Estado de autenticación
 let authToken = localStorage.getItem('authToken');
 let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+let isGuest = localStorage.getItem('isGuest') === 'true';
 let currentAnimeId = null; // Para guardar el anime actual en favoritos
 
 const translations = {
@@ -64,6 +68,7 @@ const translations = {
         nav_explore: 'Explorar',
         nav_search: 'Buscar',
         nav_roadmap: 'Roadmap',
+        guest_mode: 'Continuar como Invitado',
         hero_tag: 'Landing moderna',
         hero_title: 'Busca anime rápido y explora detalles al instante',
         hero_subtitle: 'Interfaz limpia con búsqueda dinámica, resultados en vivo y vista de detalle. Ideal para la base del frontend de tu aplicación.',
@@ -73,8 +78,8 @@ const translations = {
         hero_metrics_1_body: 'Busca sin recargar y descubre anime al instante.',
         hero_metrics_2_title: 'Vista de detalle',
         hero_metrics_2_body: 'Selecciona un anime y ve sinopsis, score y episodios.',
-        hero_metrics_3_title: 'Preparado para crecer',
-        hero_metrics_3_body: 'La base de frontend lista para agregar login y favoritos.',
+        hero_metrics_3_title: 'Tus Favoritos',
+        hero_metrics_3_body: 'Guarda y gestiona tu lista personal de animes favoritos.',
         explore_tag: 'Explora géneros',
         explore_title: 'Carrusel de categorías',
         genre_action: 'Acción',
@@ -117,7 +122,9 @@ const translations = {
         footer_search: 'Buscar',
         footer_copyright: '© 2026 Anime Recommender. Todos los derechos reservados.',
         footer_data_source: 'Datos proporcionados por MyAnimeList',
+        nav_guest: 'Invitado',
         nav_login: 'Ingresar',
+        nav_register: 'Registrarse',
         tab_login: 'Ingresar',
         tab_register: 'Registrarse',
         login_title: 'Inicia sesión',
@@ -146,6 +153,7 @@ const translations = {
         nav_explore: 'Explore',
         nav_search: 'Search',
         nav_roadmap: 'Roadmap',
+        guest_mode: 'Continue as Guest',
         hero_tag: 'Modern landing',
         hero_title: 'Search anime fast and explore details instantly',
         hero_subtitle: 'Clean interface with dynamic search, live results and detail view. Built for the frontend base of your app.',
@@ -155,8 +163,8 @@ const translations = {
         hero_metrics_1_body: 'Search without reloading and discover anime instantly.',
         hero_metrics_2_title: 'Detail view',
         hero_metrics_2_body: 'Select an anime and see synopsis, score and episodes.',
-        hero_metrics_3_title: 'Ready to grow',
-        hero_metrics_3_body: 'Frontend base ready for login and favorites.',
+        hero_metrics_3_title: 'Your Favorites',
+        hero_metrics_3_body: 'Save and manage your personal list of favorite anime.',
         explore_tag: 'Explore genres',
         explore_title: 'Categories carousel',
         genre_action: 'Action',
@@ -199,7 +207,9 @@ const translations = {
         footer_search: 'Search',
         footer_copyright: '© 2026 Anime Recommender. All rights reserved.',
         footer_data_source: 'Data provided by MyAnimeList',
+        nav_guest: 'Guest',
         nav_login: 'Sign In',
+        nav_register: 'Register',
         tab_login: 'Sign In',
         tab_register: 'Register',
         login_title: 'Sign in',
@@ -247,7 +257,7 @@ function applyLanguage(lang) {
         }
     });
     langToggle.textContent = lang.toUpperCase();
-    currentPage = lang;
+    currentLanguage = lang;
     localStorage.setItem('animeLanguage', lang);
     const placeholder = searchInput.dataset[`placeholder${lang.toUpperCase()}`];
     if (placeholder) {
@@ -265,7 +275,7 @@ function scrollCarousel(targetSelector, direction) {
 searchButton.addEventListener('click', () => {
     const query = searchInput.value.trim();
     if (query.length < 2) {
-        alert(translations[currentPage].search_hint);
+        alert(translations[currentLanguage].search_hint);
         return;
     }
     fetchAnimeResults(query);
@@ -498,9 +508,12 @@ async function loginUser(username, password) {
         if (response.ok && data.status === 'success') {
             authToken = data.token;
             currentUser = data.user;
+            isGuest = false;
             localStorage.setItem('authToken', authToken);
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.removeItem('isGuest');
             updateAuthUI();
+            showAuthenticatedSections();
             closeAuthModal();
             showToast(currentLanguage === 'en' ? 'Welcome!' : '¡Bienvenido!', 'success');
             return true;
@@ -528,9 +541,12 @@ async function registerUser(userData) {
         if (response.ok && data.status === 'success') {
             authToken = data.token;
             currentUser = data.user;
+            isGuest = false;
             localStorage.setItem('authToken', authToken);
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.removeItem('isGuest');
             updateAuthUI();
+            showAuthenticatedSections();
             closeAuthModal();
             showToast(currentLanguage === 'en' ? 'Account created successfully!' : '¡Cuenta creada exitosamente!', 'success');
             return true;
@@ -585,15 +601,54 @@ function updateAuthUI() {
     if (authToken && currentUser) {
         // Usuario autenticado
         authToggle.classList.add('hidden');
-        userMenu.classList.remove('hidden');
-        userMenuUsername.textContent = currentUser.username;
-        favButton.classList.remove('hidden');
+        registerToggle.classList.add('hidden');
+        if (userMenu) {
+            userMenu.classList.remove('hidden');
+        }
+        if (userMenuUsername) {
+            userMenuUsername.textContent = currentUser.username;
+        }
+        if (favButton) {
+            favButton.classList.remove('hidden');
+        }
+        isGuest = false;
     } else {
         // Usuario no autenticado
-        authToggle.classList.remove('hidden');
-        userMenu.classList.add('hidden');
-        favButton.classList.add('hidden');
+        if (authToggle) {
+            authToggle.classList.remove('hidden');
+        }
+        if (registerToggle) {
+            registerToggle.classList.remove('hidden');
+        }
+        if (userMenu) {
+            userMenu.classList.add('hidden');
+        }
+        if (favButton) {
+            favButton.classList.add('hidden');
+        }
     }
+}
+
+// Mostrar secciones autorizadas (cuando usuario está autenticado o es invitado)
+function showAuthenticatedSections() {
+    const authRequiredSections = document.querySelectorAll('.auth-required');
+    authRequiredSections.forEach(section => {
+        if (isGuest || (authToken && currentUser)) {
+            section.classList.remove('hidden');
+        } else {
+            section.classList.add('hidden');
+        }
+    });
+}
+
+// Verificar autorización al cargar la página
+function checkAuthorization() {
+    authToken = localStorage.getItem('authToken');
+    currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    isGuest = localStorage.getItem('isGuest') === 'true';
+    
+    updateAuthUI();
+    showAuthenticatedSections();
 }
 
 // ===== FUNCIONES DE FAVORITOS =====
@@ -712,10 +767,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyTheme(currentTheme);
     applyLanguage(currentLanguage);
     
+    // Verificar autorización y mostrar secciones apropiadas
+    checkAuthorization();
+    
     if (authToken) {
         await verifyToken();
     }
     updateAuthUI();
+    showAuthenticatedSections();
 });
 
 // Event listeners de autenticación
@@ -726,6 +785,40 @@ authToggle.addEventListener('click', () => {
     tabButtons[0].classList.add('active');
     tabButtons[1].classList.remove('active');
 });
+
+if (registerToggle) {
+    registerToggle.addEventListener('click', () => {
+        authModal.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        tabButtons[0].classList.remove('active');
+        tabButtons[1].classList.add('active');
+    });
+}
+
+if (guestButton) {
+    guestButton.addEventListener('click', () => {
+        authToken = null;
+        currentUser = null;
+        isGuest = true;
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        localStorage.setItem('isGuest', 'true');
+        updateAuthUI();
+        showAuthenticatedSections();
+    });
+}
+
+if (guestToggle) {
+    guestToggle.addEventListener('click', () => {
+        authToken = null;
+        currentUser = null;
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        updateAuthUI();
+        showToast(currentLanguage === 'en' ? 'Browsing as guest' : 'Navegando como invitado', 'info');
+    });
+}
 
 closeAuthModal.addEventListener('click', closeAuthModal);
 

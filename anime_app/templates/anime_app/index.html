@@ -17,16 +17,13 @@
                     <span class="brand-slogan" data-i18n="nav_slogan">Busca anime con estilo</span>
                 </div>
             </div>
-            <div class="nav-links">
-                <a href="#hero" data-i18n="nav_home">Inicio</a>
-                <a href="#explore" data-i18n="nav_explore">Explorar</a>
-                <a href="#searchSection" data-i18n="nav_search">Buscar</a>
-            </div>
+
             <div class="nav-actions">
+                <a href="{% url 'anime_app:login' %}" class="nav-button" data-i18n="nav_login">Ingresar</a>
+                <a href="{% url 'anime_app:register' %}" class="nav-button" data-i18n="nav_register">Registrarse</a>
                 <button class="nav-button" id="langToggle">ES</button>
                 <button class="nav-button" id="themeToggle" aria-label="Cambiar modo">🌙</button>
-                <button class="nav-button" id="authToggle" data-i18n="nav_login">Ingresar</button>
-                <button class="nav-button hidden" id="userMenu">👤 <span id="userMenuUsername"></span></button>
+
             </div>
         </nav>
 
@@ -35,7 +32,7 @@
                 <h1 data-i18n="hero_title">Busca anime rápido y explora detalles al instante</h1>
                 <p data-i18n="hero_subtitle">Interfaz limpia con búsqueda dinámica, resultados en vivo y vista de detalle. Ideal para la base del frontend de tu aplicación.</p>
                 <div class="hero-actions">
-                    <button class="primary-button" id="heroSearchButton" data-target="#searchSection" data-i18n="hero_cta">Comenzar búsqueda</button>
+                    <button class="primary-button" id="guestButton" data-i18n="guest_mode">Continuar como Invitado</button>
                 </div>
             </div>
             <div class="hero-panel">
@@ -47,10 +44,14 @@
                     <h3 data-i18n="hero_metrics_2_title">Vista de detalle</h3>
                     <p data-i18n="hero_metrics_2_body">Selecciona un anime y ve sinopsis, score y episodios.</p>
                 </div>
+                <div class="hero-card">
+                    <h3 data-i18n="hero_metrics_3_title">Tus Favoritos</h3>
+                    <p data-i18n="hero_metrics_3_body">Guarda y gestiona tu lista personal de animes favoritos.</p>
+                </div>
             </div>
         </header>
 
-        <section class="section-block" id="explore">
+        <section class="section-block auth-required hidden" id="explore">
             <div class="section-header">
                 <div>
                     <p class="eyebrow" data-i18n="explore_tag">Explora géneros</p>
@@ -79,7 +80,7 @@
             </div>
         </section>
 
-        <section class="section-block search-section" id="searchSection">
+        <section class="section-block search-section auth-required hidden" id="searchSection">
             <div class="section-header">
                 <div>
                     <p class="eyebrow" data-i18n="search_tag">Búsqueda dinámica</p>
@@ -108,7 +109,7 @@
             </div>
         </section>
 
-        <section class="section-block detail-section">
+        <section class="section-block detail-section auth-required hidden">
             <div class="section-header">
                 <div>
                     <p class="eyebrow" data-i18n="detail_tag">Detalle instantáneo</p>
@@ -142,75 +143,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="detail-placeholder" id="detailPlaceholder">
-                    <p data-i18n="detail_placeholder">Selecciona un resultado para ver información ampliada aquí.</p>
-                </div>
+
             </div>
         </section>
 
-        <!-- ===== MODALES DE AUTENTICACIÓN ===== -->
-        <div id="authModal" class="modal hidden">
-            <div class="modal-content">
-                <button class="close-modal" id="closeAuthModal">❌</button>
-                
-                <!-- Pestañas: Login / Registro -->
-                <div class="auth-tabs">
-                    <button class="tab-btn active" data-tab="login" data-i18n="tab_login">Ingresar</button>
-                    <button class="tab-btn" data-tab="register" data-i18n="tab_register">Registrarse</button>
-                </div>
-                
-                <!-- PANEL LOGIN -->
-                <form id="loginForm" class="auth-form active">
-                    <h2 data-i18n="login_title">Inicia sesión</h2>
-                    <div class="form-group">
-                        <label for="loginUsername" data-i18n="login_username">Nombre de usuario</label>
-                        <input id="loginUsername" type="text" required autocomplete="username" data-placeholder-es="Tu usuario" data-placeholder-en="Your username">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword" data-i18n="login_password">Contraseña</label>
-                        <input id="loginPassword" type="password" required autocomplete="current-password" data-placeholder-es="Tu contraseña" data-placeholder-en="Your password">
-                    </div>
-                    <p id="loginError" class="form-error hidden"></p>
-                    <button type="submit" class="primary-button" data-i18n="login_button">Ingresar</button>
-                    <p class="form-hint" data-i18n="login_hint">¿No tienes cuenta? Regístrate arriba.</p>
-                </form>
-                
-                <!-- PANEL REGISTRO -->
-                <form id="registerForm" class="auth-form hidden">
-                    <h2 data-i18n="register_title">Crea tu cuenta</h2>
-                    <div class="form-group">
-                        <label for="registerUsername" data-i18n="register_username">Nombre de usuario</label>
-                        <input id="registerUsername" type="text" required autocomplete="username" data-placeholder-es="Tu usuario" data-placeholder-en="Your username">
-                        <small class="form-hint" data-i18n="register_username_hint">3-150 caracteres, letras, números, guiones</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail" data-i18n="register_email">Email</label>
-                        <input id="registerEmail" type="email" required autocomplete="email" data-placeholder-es="tu@email.com" data-placeholder-en="your@email.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword" data-i18n="register_password">Contraseña</label>
-                        <input id="registerPassword" type="password" required data-placeholder-es="Con mayúscula, número, carácter especial" data-placeholder-en="With uppercase, number, special character">
-                        <small class="form-hint" data-i18n="register_password_hint">Mínimo 8 caracteres, mayúscula, número, carácter especial</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPasswordConfirm" data-i18n="register_password_confirm">Confirmar contraseña</label>
-                        <input id="registerPasswordConfirm" type="password" required>
-                    </div>
-                    <p id="registerError" class="form-error hidden"></p>
-                    <button type="submit" class="primary-button" data-i18n="register_button">Registrarse</button>
-                    <p class="form-hint" data-i18n="register_hint">¿Ya tienes cuenta? Inicia sesión arriba.</p>
-                </form>
-            </div>
-        </div>
 
-        <!-- ===== MENÚ DE USUARIO ===== -->
-        <div id="userDropdown" class="dropdown-menu hidden">
-            <a href="{% url 'anime_app:profile' %}" data-i18n="menu_favorites">⭐ Mis favoritos</a>
-            <a href="{% url 'anime_app:profile' %}" data-i18n="menu_profile">👤 Mi perfil</a>
-            <button id="logoutBtn" data-i18n="menu_logout">🚪 Cerrar sesión</button>
-        </div>
-
-        <footer class="site-footer">
+        <footer class="site-footer auth-required hidden">
             <div class="footer-content">
                 <div class="footer-brand">
                     <span class="brand-mark">AR</span>

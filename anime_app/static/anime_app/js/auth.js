@@ -43,7 +43,7 @@ function applyTheme(theme) {
 // ===== FUNCIONES DE AUTENTICACIÓN =====
 async function loginUser(username, password) {
     try {
-        const response = await fetch('/auth/login/', {
+        const response = await fetch('/auth/login/', { //. fetch significa hacer una solicitud HTTP al backend para enviar las credenciales del usuario y obtener un token de autenticación si son correctas.
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

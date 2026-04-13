@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render # Importar render para mostrar plantillas HTML
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
@@ -16,7 +16,7 @@ from .auth_utils import (
     validate_username, validate_email, ensure_user_profile
 )
 
-
+# Este request es para la vista principal del frontend, donde el usuario puede buscar anime dinámicamente y ver resultados instantáneos sin recargar la página.
 def index(request):
     """
     Vista principal del frontend.
@@ -230,12 +230,13 @@ def anime_search_by_genre(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET", "POST"])
 def register(request):
     """
-    Endpoint para registrar un nuevo usuario.
+    Endpoint para registrar un nuevo usuario o mostrar la página de registro.
     
-    POST: /auth/register/
+    GET: /auth/register/ -> Muestra la página de registro.
+    POST: /auth/register/ -> Procesa el registro.
     
     Body JSON:
         {
@@ -253,7 +254,10 @@ def register(request):
             "user": {"id": 1, "username": "usuario123", "email": "usuario@example.com"}
         }
     """
-    
+
+    if request.method == "GET":
+        return render(request, "anime_app/register.html")
+
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:
@@ -266,7 +270,7 @@ def register(request):
     email = body.get("email", "").strip()
     password = body.get("password", "")
     password_confirm = body.get("password_confirm", "")
-    
+
     # Validar username
     username_validation = validate_username(username)
     if not username_validation['is_valid']:
@@ -338,12 +342,13 @@ def register(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET", "POST"])
 def login(request):
     """
-    Endpoint para iniciar sesión.
+    Endpoint para iniciar sesión o mostrar la página de login.
     
-    POST: /auth/login/
+    GET: /auth/login/ -> Muestra la página de login.
+    POST: /auth/login/ -> Procesa el login.
     
     Body JSON:
         {
@@ -360,7 +365,10 @@ def login(request):
             "remaining_attempts": 3  (si rate_limited)
         }
     """
-    
+
+    if request.method == "GET":
+        return render(request, "anime_app/login.html")
+
     try:
         body = json.loads(request.body)
     except json.JSONDecodeError:

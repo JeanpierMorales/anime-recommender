@@ -24,6 +24,7 @@ body {
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+
 }
 
 body.theme-dark {
@@ -40,6 +41,42 @@ body.theme-dark {
 
 * {
     box-sizing: border-box;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: min(760px, 100%);
+    background: var(--surface);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--muted);
 }
 
 button,

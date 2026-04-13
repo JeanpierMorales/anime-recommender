@@ -10,7 +10,7 @@ from .models import Anime
 # URL base de la API Jikan (gratuita, sin autenticación)
 JIKAN_API_BASE = "https://api.jikan.moe/v4"
 # Tiempo de caché en segundos (1 hora = 3600)
-CACHE_TIME = 3600
+CACHE_TIME = 3600 # Tiempo optimo para balancear frescura de datos y reducción de llamadas a la API
 
 
 def search_anime(query):
@@ -37,13 +37,13 @@ def search_anime(query):
     """
     
     # Validar que query no esté vacía
-    if not query or not query.strip():
+    if not query or not query.strip(): # Si el query es vacío o solo espacios, retornar lista vacía
         return []
     
     # Crear clave de caché única para esta búsqueda
-    cache_key = f"search_anime_{query.strip().lower()}"
+    cache_key = f"search_anime_{query.strip().lower().replace(' ', '_').replace(':', '')}" # por ejemplo "Death Note" -> "search_anime_death_note" para evitar problemas con espacios o caracteres especiales
     
-    # Verificar si ya tenemos este resultado en caché
+    # Verificar si ya tenemos este resultado en caché para evitar consultas repetidas a la API
     cached_result = cache.get(cache_key)
     if cached_result is not None:
         print(f"[CACHÉ] Retornando resultado en caché para: {query}")
@@ -54,7 +54,7 @@ def search_anime(query):
         print(f"[API] Buscando en Jikan: {query}")
         response = requests.get(
             f"{JIKAN_API_BASE}/anime",
-            params={"query": query, "limit": 25},
+            params={"q": query, "limit": 25},
             timeout=10
         )
         response.raise_for_status()  # Lanzar excepción si hay error HTTP
